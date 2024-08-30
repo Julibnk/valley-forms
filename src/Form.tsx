@@ -17,7 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
+
 import {
+  CalendarIcon,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -26,11 +29,19 @@ import {
   Trash2,
 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from './components/ui/popover';
+import { cn } from './lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from './components/ui/calendar';
 
 export default function Form() {
   const signatureRef = useRef<SignatureCanvas>(null);
   const [customers, setCustomers] = useState([
-    { name: '', birthdate: '', dni: '', signature: null },
+    { name: '', birthdate: new Date(), dni: '', signature: null },
   ]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,13 +64,14 @@ export default function Form() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    toast.success('Form submitted');
     console.log('Form submitted', customers);
   };
 
   const addCustomer = () => {
     setCustomers([
       ...customers,
-      { name: '', birthdate: '', dni: '', signature: null },
+      { name: '', birthdate: new Date(), dni: '', signature: null },
     ]);
     setCurrentCustomer(customers.length);
   };
@@ -123,7 +135,9 @@ export default function Form() {
             </Select>
           </div>
 
+          {/* Formulario cliente */}
           <div className='space-y-4 p-4 border rounded-md bg-muted/50'>
+            {/* Header */}
             <div className='flex justify-between items-center'>
               <h3 className='font-semibold'>
                 Cliente {currentCustomer + 1} de {customers.length}
@@ -176,6 +190,8 @@ export default function Form() {
                 </Button>
               </div>
             </div>
+
+            {/* Formulario */}
             <div className='space-y-2'>
               <Label htmlFor='name'>Name</Label>
               <Input
@@ -185,15 +201,37 @@ export default function Form() {
                 required
               />
             </div>
-            <div className='space-y-2'>
+            <div className='flex flex-col space-y-2'>
               <Label htmlFor='birthdate'>Fecha de nacimiento</Label>
-              <Input
-                type='date'
-                id='birthdate'
-                value={customers[currentCustomer].birthdate}
-                onChange={(e) => updateCustomer('birthdate', e.target.value)}
-                required
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'justify-start text-left font-normal',
+                      !customers[currentCustomer].birthdate &&
+                        'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className='mr-2 h-4 w-4' />
+                    {customers[currentCustomer].birthdate ? (
+                      format(customers[currentCustomer].birthdate, 'PPP')
+                    ) : (
+                      <span>Elija una fecha</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='w-auto p-0'>
+                  <Calendar
+                    mode='single'
+                    selected={customers[currentCustomer].birthdate}
+                    onSelect={(e) =>
+                      e && updateCustomer('birthdate', e.toString())
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className='space-y-2'>
               <Label htmlFor='dni'>DNI</Label>
@@ -223,25 +261,60 @@ export default function Form() {
                 Limpiar firma
               </Button>
             </div>
-            {/* <div className='space-y-2'>
-              <Label htmlFor='signature'>Firma</Label>
-              <div className='border rounded-md p-2'>
-                <canvas
-                  ref={canvasRef}
-                  width={300}
-                  height={150}
-                  className='border w-full touch-none'
-                  onMouseDown={startDrawing}
-                  onMouseUp={stopDrawing}
-                  onMouseOut={stopDrawing}
-                  onMouseMove={draw}
-                  onTouchStart={startDrawing}
-                  onTouchEnd={stopDrawing}
-                  onTouchMove={draw}
-                />
+
+            {/* Header */}
+            <div className='flex justify-between items-center'>
+              <h3 className='font-semibold'>
+                Cliente {currentCustomer + 1} de {customers.length}
+              </h3>
+              <div className='space-x-2'>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='icon'
+                  onClick={() =>
+                    setCurrentCustomer((prev) => Math.max(0, prev - 1))
+                  }
+                  disabled={currentCustomer === 0}
+                >
+                  <ChevronLeft className='h-4 w-4' />
+                  <span className='sr-only'>Anterior</span>
+                </Button>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='icon'
+                  onClick={() =>
+                    setCurrentCustomer((prev) =>
+                      Math.min(customers.length - 1, prev + 1)
+                    )
+                  }
+                  disabled={currentCustomer === customers.length - 1}
+                >
+                  <ChevronRight className='h-4 w-4' />
+                  <span className='sr-only'>Siguiente cliente</span>
+                </Button>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='icon'
+                  onClick={addCustomer}
+                >
+                  <Plus className='h-4 w-4' />
+                  <span className='sr-only'>Añadir cliente</span>
+                </Button>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='icon'
+                  onClick={deleteCustomer}
+                  disabled={customers.length === 1}
+                >
+                  <Trash2 className='h-4 w-4' />
+                  <span className='sr-only'>Borrar cliente</span>
+                </Button>
               </div>
-              
-            </div> */}
+            </div>
           </div>
 
           <div className='space-y-2'>
