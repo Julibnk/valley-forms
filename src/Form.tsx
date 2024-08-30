@@ -124,24 +124,37 @@ export default function Form() {
     }
   };
 
+  enum Activity {
+    BARRANCOS = 'Barrancos',
+    LAGOS = 'Lagos',
+    DESCENSO_SELLA = 'Descenso del Sella',
+    RUTA_CARES = 'Ruta del Cares',
+  }
+
   return (
     <Card className='w-full max-w-2xl'>
-      <CardHeader>
-        <CardTitle>Activity Confirmation</CardTitle>
+      <CardHeader className='border-b'>
+        <CardTitle className='text-2xl text-center text-primary'>
+          Activity Confirmation
+        </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className='space-y-6'>
+        <CardContent className='space-y-6 p-6'>
           <div className='space-y-2'>
-            <Label htmlFor='activity'>Select Activity</Label>
+            <Label htmlFor='activity'>Seleccion de actividad</Label>
             <Select required>
               <SelectTrigger id='activity'>
-                <SelectValue placeholder='Choose an activity' />
+                <SelectValue placeholder='Elija una atividad' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='hiking'>Hiking</SelectItem>
-                <SelectItem value='swimming'>Swimming</SelectItem>
-                <SelectItem value='cycling'>Cycling</SelectItem>
-                <SelectItem value='kayaking'>Kayaking</SelectItem>
+                <SelectItem value={Activity.BARRANCOS}>Barrancos</SelectItem>
+                <SelectItem value={Activity.LAGOS}>Lagos</SelectItem>
+                <SelectItem value={Activity.DESCENSO_SELLA}>
+                  Descenso del Sella
+                </SelectItem>
+                <SelectItem value={Activity.RUTA_CARES}>
+                  Ruta del Cares
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -176,7 +189,7 @@ export default function Form() {
                   disabled={currentCustomer === customers.length - 1}
                 >
                   <ChevronRight className='h-4 w-4' />
-                  <span className='sr-only'>Next customer</span>
+                  <span className='sr-only'>Siguiente cliente</span>
                 </Button>
                 <Button
                   type='button'
@@ -185,7 +198,7 @@ export default function Form() {
                   onClick={addCustomer}
                 >
                   <Plus className='h-4 w-4' />
-                  <span className='sr-only'>Add customer</span>
+                  <span className='sr-only'>Añadir cliente</span>
                 </Button>
                 <Button
                   type='button'
@@ -209,7 +222,7 @@ export default function Form() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='birthdate'>Birthdate</Label>
+              <Label htmlFor='birthdate'>Fecha de nacimiento</Label>
               <Input
                 type='date'
                 id='birthdate'
@@ -228,7 +241,7 @@ export default function Form() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='signature'>Signature</Label>
+              <Label htmlFor='signature'>Firma</Label>
               <div className='border rounded-md p-2'>
                 <canvas
                   ref={canvasRef}
@@ -250,7 +263,7 @@ export default function Form() {
                 className='w-full mt-2'
                 onClick={clearSignature}
               >
-                Clear Signature
+                Limpiar firma
               </Button>
             </div>
           </div>
@@ -316,8 +329,11 @@ export default function Form() {
             </Label>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button type='submit' className='w-full'>
+        <CardFooter className='bg-primary/5'>
+          <Button
+            type='submit'
+            className='w-full bg-primary text-primary-foreground hover:bg-primary/90'
+          >
             Confirm Activity
           </Button>
         </CardFooter>
