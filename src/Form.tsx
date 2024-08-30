@@ -45,9 +45,9 @@ const client = generateClient<Schema>();
 
 export default function Form() {
   const signatureRef = useRef<SignatureCanvas>(null);
-  const [customers, setCustomers] = useState([
-    { name: '', birthdate: new Date(), dni: '', signature: null },
-  ]);
+  const [customers, setCustomers] = useState<
+    Array<Schema['Customer']['createType']>
+  >([{ name: '', birthdate: '', dni: '' }]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
 
   const handleClear = () => {
@@ -57,14 +57,16 @@ export default function Form() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     toast.success('Form submitted');
+    client.models.Customer.create({
+      name: customers[0].name,
+      birthdate: customers[0].birthdate,
+      dni: customers[0].dni,
+    });
     console.log('Form submitted', customers);
   };
 
   const addCustomer = () => {
-    setCustomers([
-      ...customers,
-      { name: '', birthdate: new Date(), dni: '', signature: null },
-    ]);
+    setCustomers([...customers, { name: '', birthdate: '', dni: '' }]);
     setCurrentCustomer(customers.length);
   };
 
@@ -188,7 +190,7 @@ export default function Form() {
               <Label htmlFor='name'>Name</Label>
               <Input
                 id='name'
-                value={customers[currentCustomer].name}
+                value={customers[currentCustomer].name || ''}
                 onChange={(e) => updateCustomer('name', e.target.value)}
                 required
               />
@@ -216,7 +218,11 @@ export default function Form() {
                 <PopoverContent className='w-auto p-0'>
                   <Calendar
                     mode='single'
-                    selected={customers[currentCustomer].birthdate}
+                    selected={
+                      customers[currentCustomer].birthdate
+                        ? new Date(customers[currentCustomer].birthdate)
+                        : new Date()
+                    }
                     onSelect={(e) =>
                       e && updateCustomer('birthdate', e.toString())
                     }
@@ -229,7 +235,7 @@ export default function Form() {
               <Label htmlFor='dni'>DNI</Label>
               <Input
                 id='dni'
-                value={customers[currentCustomer].dni}
+                value={customers[currentCustomer].dni || ''}
                 onChange={(e) => updateCustomer('dni', e.target.value)}
                 required
               />
