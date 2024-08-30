@@ -25,14 +25,19 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react';
+import SignatureCanvas from 'react-signature-canvas';
 
 export default function Form() {
+  const signatureRef = useRef<SignatureCanvas>(null);
   const [customers, setCustomers] = useState([
     { name: '', birthdate: '', dni: '', signature: null },
   ]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
+
+  const handleClear = () => {
+    signatureRef.current?.clear();
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -68,21 +73,6 @@ export default function Form() {
     setCustomers(updatedCustomers);
   };
 
-  const startDrawing = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
-  ) => {
-    setIsDrawing(true);
-    draw(e);
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-    const canvas = canvasRef.current;
-    if (canvas) {
-      updateCustomer('signature', canvas.toDataURL());
-    }
-  };
-
   const deleteCustomer = () => {
     if (customers.length > 1) {
       const newCustomers = customers.filter(
@@ -98,32 +88,6 @@ export default function Form() {
   const [showTerms, setShowTerms] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
 
-  const draw = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
-  ) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx && canvas) {
-      const rect = canvas.getBoundingClientRect();
-      const x = ('touches' in e ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = ('touches' in e ? e.touches[0].clientY : e.clientY) - rect.top;
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    }
-  };
-
-  const clearSignature = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (ctx && canvas) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      updateCustomer('signature', null);
-    }
-  };
-
   enum Activity {
     BARRANCOS = 'Barrancos',
     LAGOS = 'Lagos',
@@ -135,7 +99,7 @@ export default function Form() {
     <Card className='w-full max-w-2xl'>
       <CardHeader className='border-b'>
         <CardTitle className='text-2xl text-center text-primary'>
-          Activity Confirmation
+          Confirmación actividad
         </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -241,6 +205,25 @@ export default function Form() {
               />
             </div>
             <div className='space-y-2'>
+              <Label>Firma</Label>
+              <div className='border border-input rounded-md p-2 bg-background'>
+                <SignatureCanvas
+                  ref={signatureRef}
+                  canvasProps={{
+                    className: 'w-full h-40 bg-background',
+                  }}
+                />
+              </div>
+              <Button
+                type='button'
+                variant='outline'
+                className='w-full mt-2'
+                onClick={handleClear}
+              >
+                Limpiar firma
+              </Button>
+            </div>
+            {/* <div className='space-y-2'>
               <Label htmlFor='signature'>Firma</Label>
               <div className='border rounded-md p-2'>
                 <canvas
@@ -257,15 +240,8 @@ export default function Form() {
                   onTouchMove={draw}
                 />
               </div>
-              <Button
-                type='button'
-                variant='outline'
-                className='w-full mt-2'
-                onClick={clearSignature}
-              >
-                Limpiar firma
-              </Button>
-            </div>
+              
+            </div> */}
           </div>
 
           <div className='space-y-2'>
@@ -329,12 +305,12 @@ export default function Form() {
             </Label>
           </div>
         </CardContent>
-        <CardFooter className='bg-primary/5'>
+        <CardFooter className='bg-primary/5 p-6'>
           <Button
             type='submit'
             className='w-full bg-primary text-primary-foreground hover:bg-primary/90'
           >
-            Confirm Activity
+            Confirmar actividad
           </Button>
         </CardFooter>
       </form>
