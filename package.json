@@ -15,6 +15,7 @@
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
+    "aws-amplify": "^6.5.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -29,6 +30,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.2.0",
+    "@aws-amplify/backend-cli": "^1.2.5",
     "@eslint/js": "^9.9.0",
     "@types/node": "^22.5.1",
     "@types/react": "^18.3.3",
@@ -36,13 +39,18 @@
     "@types/react-signature-canvas": "^1.0.5",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "aws-cdk": "^2.155.0",
+    "aws-cdk-lib": "^2.155.0",
+    "constructs": "^10.3.0",
+    "esbuild": "^0.23.1",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   }

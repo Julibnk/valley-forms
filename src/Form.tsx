@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -38,29 +38,21 @@ import { cn } from './lib/utils';
 import { format } from 'date-fns';
 import { Calendar } from './components/ui/calendar';
 
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../amplify/data/resource';
+
+const client = generateClient<Schema>();
+
 export default function Form() {
   const signatureRef = useRef<SignatureCanvas>(null);
   const [customers, setCustomers] = useState([
     { name: '', birthdate: new Date(), dni: '', signature: null },
   ]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleClear = () => {
     signatureRef.current?.clear();
   };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = '#000';
-      }
-    }
-  }, [currentCustomer]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
