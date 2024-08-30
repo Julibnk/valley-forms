@@ -23,6 +23,7 @@ import {
   ChevronRight,
   ChevronUp,
   Plus,
+  Trash2,
 } from 'lucide-react';
 
 export default function Form() {
@@ -79,6 +80,18 @@ export default function Form() {
     const canvas = canvasRef.current;
     if (canvas) {
       updateCustomer('signature', canvas.toDataURL());
+    }
+  };
+
+  const deleteCustomer = () => {
+    if (customers.length > 1) {
+      const newCustomers = customers.filter(
+        (_, index) => index !== currentCustomer
+      );
+      setCustomers(newCustomers);
+      setCurrentCustomer((prev) =>
+        prev >= newCustomers.length ? newCustomers.length - 1 : prev
+      );
     }
   };
 
@@ -174,6 +187,16 @@ export default function Form() {
                   <Plus className='h-4 w-4' />
                   <span className='sr-only'>Add customer</span>
                 </Button>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='icon'
+                  onClick={deleteCustomer}
+                  disabled={customers.length === 1}
+                >
+                  <Trash2 className='h-4 w-4' />
+                  <span className='sr-only'>Borrar cliente</span>
+                </Button>
               </div>
             </div>
             <div className='space-y-2'>
@@ -221,7 +244,12 @@ export default function Form() {
                   onTouchMove={draw}
                 />
               </div>
-              <Button type='button' variant='outline' onClick={clearSignature}>
+              <Button
+                type='button'
+                variant='outline'
+                className='w-full mt-2'
+                onClick={clearSignature}
+              >
                 Clear Signature
               </Button>
             </div>
