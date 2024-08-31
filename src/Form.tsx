@@ -116,7 +116,7 @@ export default function Form() {
       <form onSubmit={handleSubmit}>
         <CardContent className='space-y-6 p-6'>
           <div className='space-y-2'>
-            <Label htmlFor='activity'>Seleccion de actividad</Label>
+            <Label htmlFor='activity'>Actividad</Label>
             <Select
               required
               onValueChange={(value) =>
@@ -127,16 +127,13 @@ export default function Form() {
               }
             >
               <SelectTrigger id='activity'>
-                <SelectValue placeholder='Elija una atividad' />
+                <SelectValue placeholder='Seleccione una actividad' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={Activity.BARRANCOS}>Barrancos</SelectItem>
                 <SelectItem value={Activity.LAGOS}>Lagos</SelectItem>
                 <SelectItem value={Activity.DESCENSO_SELLA}>
                   Descenso del Sella
-                </SelectItem>
-                <SelectItem value={Activity.RUTA_CARES}>
-                  Ruta del Cares
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -236,7 +233,7 @@ export default function Form() {
 
             {/* Formulario */}
             <div className='space-y-2'>
-              <Label htmlFor='name'>Name</Label>
+              <Label htmlFor='name'>Nombre:</Label>
               <Input
                 id='name'
                 value={customers[currentCustomer].name || ''}
@@ -246,7 +243,7 @@ export default function Form() {
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='dni'>DNI</Label>
+              <Label htmlFor='dni'>DNI:</Label>
               <Input
                 id='dni'
                 value={customers[currentCustomer].dni || ''}
@@ -255,7 +252,7 @@ export default function Form() {
               />
             </div>
             <div className='space-y-2'>
-              <Label>Firma</Label>
+              <Label>Firma:</Label>
               <div className='border border-input rounded-md p-2 bg-background'>
                 <SignatureCanvas
                   ref={signatureRef}
