@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -29,18 +30,14 @@ import {
   Trash2,
 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './components/ui/popover';
-import { cn } from './lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { cn } from '../lib/utils';
 import { format } from 'date-fns';
-import { Calendar } from './components/ui/calendar';
+import { Calendar } from './ui/calendar';
 
 import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../amplify/data/resource';
-import { Activity } from '../amplify/data/Booking/Activity';
+import type { Schema } from '../../amplify/data/resource';
+import { Activity } from '../../amplify/data/Booking/Activity';
 
 const client = generateClient<Schema>();
 
@@ -107,16 +104,17 @@ export default function Form() {
   const [acceptTerms, setAcceptTerms] = useState(false);
 
   return (
-    <Card className='w-full max-w-2xl'>
-      <CardHeader className='border-b'>
-        <CardTitle className='text-2xl text-center text-primary'>
-          Confirmación actividad
-        </CardTitle>
+    <Card>
+      <CardHeader className='px-7'>
+        <CardTitle>Confirmación actividad</CardTitle>
+        <CardDescription>
+          Añada a todas las personas que van a participar
+        </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className='space-y-6 p-6'>
+      <CardContent className='px-8'>
+        <form onSubmit={handleSubmit} id='booking-form' className='space-y-6'>
           <div className='space-y-2'>
-            <Label htmlFor='activity'>Actividad</Label>
+            <Label htmlFor='activity'>Actividad:</Label>
             <Select
               required
               onValueChange={(value) =>
@@ -140,7 +138,7 @@ export default function Form() {
           </div>
 
           <div className='flex flex-col space-y-2'>
-            <Label htmlFor='birthdate'>Fecha de nacimiento</Label>
+            <Label htmlFor='birthdate'>Fecha de realización:</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -386,16 +384,17 @@ export default function Form() {
               I accept the terms and conditions
             </Label>
           </div>
-        </CardContent>
-        <CardFooter className='bg-primary/5 p-6'>
-          <Button
-            type='submit'
-            className='w-full bg-primary text-primary-foreground hover:bg-primary/90'
-          >
-            Confirmar actividad
-          </Button>
-        </CardFooter>
-      </form>
+        </form>
+      </CardContent>
+      <CardFooter className='bg-primary/5 p-6'>
+        <Button
+          type='submit'
+          formTarget='booking-form'
+          className='w-full bg-primary text-primary-foreground hover:bg-primary/90'
+        >
+          Confirmar actividad
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

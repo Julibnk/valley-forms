@@ -4,11 +4,13 @@ import App from './App.tsx';
 import './index.css';
 import { Amplify } from 'aws-amplify';
 import outputs from '../amplify_outputs.json';
+import { Toaster } from '@/components/ui/sonner';
 
 Amplify.configure(outputs);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
+    <Toaster />
   </StrictMode>
 );
