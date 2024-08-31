@@ -224,7 +224,7 @@ export default function Form() {
                         : new Date()
                     }
                     onSelect={(e) =>
-                      e && updateCustomer('birthdate', e.toString())
+                      e && updateCustomer('birthdate', '2022-03-03')
                     }
                     initialFocus
                   />
