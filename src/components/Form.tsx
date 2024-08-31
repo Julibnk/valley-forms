@@ -159,6 +159,7 @@ export default function Form() {
               <PopoverContent className='w-auto p-0'>
                 <Calendar
                   mode='single'
+                  fromDate={new Date()}
                   selected={booking.date ? new Date(booking.date) : new Date()}
                   onSelect={(e) =>
                     e &&
@@ -236,6 +237,16 @@ export default function Form() {
                 id='name'
                 value={customers[currentCustomer].name || ''}
                 onChange={(e) => updateCustomer('name', e.target.value)}
+                required
+              />
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='name'>Apellidos:</Label>
+              <Input
+                id='surname'
+                value={customers[currentCustomer].surname || ''}
+                onChange={(e) => updateCustomer('surname', e.target.value)}
                 required
               />
             </div>

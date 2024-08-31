@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
+import { Badge } from './ui/badge';
 
 const client = generateClient<Schema>();
 
@@ -55,11 +56,11 @@ export const BookingTable = () => {
             {bookings.map((booking) => (
               <TableRow key={booking.id}>
                 <TableCell className='font-medium'>
-                  {booking.activity}
+                  <Badge>{booking.activity}</Badge>
                 </TableCell>
                 <TableCell>{booking.date}</TableCell>
                 <TableCell className='text-right'>
-                  <Button variant='outline' size='sm' asChild>
+                  <Button variant='ghost' size='sm' asChild>
                     <a href={booking.pdfUrl ?? ''} download>
                       <FileDown className='mr-2 h-4 w-4' />
                       PDF
