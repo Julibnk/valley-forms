@@ -40,14 +40,21 @@ import { Calendar } from './components/ui/calendar';
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../amplify/data/resource';
+import { Activity } from '../amplify/data/Booking/Activity';
 
 const client = generateClient<Schema>();
 
 export default function Form() {
   const signatureRef = useRef<SignatureCanvas>(null);
+  const [booking, setBooking] = useState<Schema['Booking']['createType']>({
+    activity: null,
+    date: new Date().toISOString(),
+    pdfUrl: '',
+  });
+
   const [customers, setCustomers] = useState<
     Array<Schema['Customer']['createType']>
-  >([{ name: '', birthdate: '', dni: '' }]);
+  >([{ name: '', surname: '', dni: '' }]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
 
   const handleClear = () => {
@@ -57,16 +64,21 @@ export default function Form() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     toast.success('Form submitted');
-    client.models.Customer.create({
-      name: customers[0].name,
-      birthdate: customers[0].birthdate,
-      dni: customers[0].dni,
+    client.models.Booking.create({
+      activity: booking.activity,
+      date: booking.date,
+      pdfUrl: 'https://morth.nic.in/sites/default/files/dd12-13_0.pdf',
     });
+    // client.models.Customer.create({
+    //   name: customers[0].name,
+    //   birthdate: customers[0].birthdate,
+    //   dni: customers[0].dni,
+    // });
     console.log('Form submitted', customers);
   };
 
   const addCustomer = () => {
-    setCustomers([...customers, { name: '', birthdate: '', dni: '' }]);
+    setCustomers([...customers, { name: '', surname: '', dni: '' }]);
     setCurrentCustomer(customers.length);
   };
 
@@ -94,13 +106,6 @@ export default function Form() {
   const [showTerms, setShowTerms] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
 
-  enum Activity {
-    BARRANCOS = 'Barrancos',
-    LAGOS = 'Lagos',
-    DESCENSO_SELLA = 'Descenso del Sella',
-    RUTA_CARES = 'Ruta del Cares',
-  }
-
   return (
     <Card className='w-full max-w-2xl'>
       <CardHeader className='border-b'>
@@ -112,7 +117,15 @@ export default function Form() {
         <CardContent className='space-y-6 p-6'>
           <div className='space-y-2'>
             <Label htmlFor='activity'>Seleccion de actividad</Label>
-            <Select required>
+            <Select
+              required
+              onValueChange={(value) =>
+                setBooking((state) => ({
+                  ...state,
+                  activity: value as Activity,
+                }))
+              }
+            >
               <SelectTrigger id='activity'>
                 <SelectValue placeholder='Elija una atividad' />
               </SelectTrigger>
@@ -127,6 +140,42 @@ export default function Form() {
                 </SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className='flex flex-col space-y-2'>
+            <Label htmlFor='birthdate'>Fecha de nacimiento</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={'outline'}
+                  className={cn(
+                    'justify-start text-left font-normal',
+                    booking.date && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className='mr-2 h-4 w-4' />
+                  {booking.date ? (
+                    format(booking.date, 'PPP')
+                  ) : (
+                    <span>Elija una fecha</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className='w-auto p-0'>
+                <Calendar
+                  mode='single'
+                  selected={booking.date ? new Date(booking.date) : new Date()}
+                  onSelect={(e) =>
+                    e &&
+                    setBooking((state) => ({
+                      ...state,
+                      date: e.toISOString().split('T')[0],
+                    }))
+                  }
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Formulario cliente */}
@@ -195,42 +244,7 @@ export default function Form() {
                 required
               />
             </div>
-            <div className='flex flex-col space-y-2'>
-              <Label htmlFor='birthdate'>Fecha de nacimiento</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={'outline'}
-                    className={cn(
-                      'justify-start text-left font-normal',
-                      !customers[currentCustomer].birthdate &&
-                        'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className='mr-2 h-4 w-4' />
-                    {customers[currentCustomer].birthdate ? (
-                      format(customers[currentCustomer].birthdate, 'PPP')
-                    ) : (
-                      <span>Elija una fecha</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0'>
-                  <Calendar
-                    mode='single'
-                    selected={
-                      customers[currentCustomer].birthdate
-                        ? new Date(customers[currentCustomer].birthdate)
-                        : new Date()
-                    }
-                    onSelect={(e) =>
-                      e && updateCustomer('birthdate', '2022-03-03')
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+
             <div className='space-y-2'>
               <Label htmlFor='dni'>DNI</Label>
               <Input

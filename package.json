@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite && npx ampx sandbox",
+    "dev": "vite",
+    "dev:aws": "npx ampx sandbox",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -1,0 +1,5 @@
+export enum Activity {
+  BARRANCOS = 'BARRANCOS',
+  LAGOS = 'LAGOS',
+  DESCENSO_SELLA = 'DESCENSO_SELLA',
+}
