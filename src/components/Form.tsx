@@ -58,19 +58,27 @@ export default function Form() {
     signatureRef.current?.clear();
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     toast.success('Form submitted');
-    client.models.Booking.create({
+    const { data: newBooking } = await client.models.Booking.create({
       activity: booking.activity,
       date: booking.date,
       pdfUrl: 'https://morth.nic.in/sites/default/files/dd12-13_0.pdf',
     });
-    // client.models.Customer.create({
-    //   name: customers[0].name,
-    //   birthdate: customers[0].birthdate,
-    //   dni: customers[0].dni,
-    // });
+
+    if (!newBooking) {
+      toast.error('Error creating booking');
+      throw new Error('Error creating booking');
+    }
+
+    await client.models.Customer.create({
+      bookingId: newBooking.id,
+      name: customers[0].name,
+      surname: customers[0].surname,
+      dni: customers[0].dni,
+    });
+
     console.log('Form submitted', customers);
   };
 
@@ -400,7 +408,7 @@ export default function Form() {
       <CardFooter className='bg-primary/5 p-6'>
         <Button
           type='submit'
-          formTarget='booking-form'
+          form='booking-form'
           className='w-full bg-primary text-primary-foreground hover:bg-primary/90'
         >
           Confirmar actividad

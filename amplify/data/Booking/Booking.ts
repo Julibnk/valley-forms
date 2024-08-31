@@ -5,5 +5,6 @@ export const Booking = a
     activity: a.enum(Object.values(Activity)),
     date: a.date(),
     pdfUrl: a.string(),
+    customers: a.hasMany('Customer', 'bookingId'),
   })
   .authorization((allow) => [allow.guest()]);

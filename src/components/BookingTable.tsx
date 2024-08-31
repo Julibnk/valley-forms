@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table';
-import { generateClient } from 'aws-amplify/api';
+import { generateClient, SelectionSet } from 'aws-amplify/api';
 import { Schema } from 'amplify/data/resource';
 import { Button } from './ui/button';
 import { FileDown } from 'lucide-react';
@@ -23,16 +23,38 @@ import { Badge } from './ui/badge';
 
 const client = generateClient<Schema>();
 
+const selectionSet = [
+  'id',
+  'activity',
+  'date',
+  'pdfUrl',
+  'customers.*',
+] as const;
+type BookingWithCustomer = SelectionSet<
+  Schema['Booking']['type'],
+  typeof selectionSet
+>;
+
 export const BookingTable = () => {
-  const [bookings, setBookings] = useState<Array<Schema['Booking']['type']>>(
-    []
-  );
+  const [bookings, setBookings] = useState<Array<BookingWithCustomer>>([]);
 
   useEffect(() => {
-    client.models.Booking.observeQuery().subscribe({
-      next: (data) => setBookings([...data.items]),
-    });
+    const fetch = async () => {
+      const { data } = await client.models.Booking.list({
+        selectionSet,
+      });
+      setBookings(data);
+    };
+    fetch();
   }, []);
+
+  console.log(bookings);
+
+  // useEffect(() => {
+  //   client.models.Booking.observeQuery().subscribe({
+  //     next: (data) => setBookings([...data.items]),
+  //   });
+  // }, []);
 
   return (
     <Card x-chunk='dashboard-05-chunk-3'>
@@ -49,6 +71,7 @@ export const BookingTable = () => {
             <TableRow>
               <TableHead>Actividad</TableHead>
               <TableHead>Fecha</TableHead>
+              <TableHead>Cliente</TableHead>
               <TableHead className='text-right'>Descargar PDF</TableHead>
             </TableRow>
           </TableHeader>
@@ -59,6 +82,7 @@ export const BookingTable = () => {
                   <Badge>{booking.activity}</Badge>
                 </TableCell>
                 <TableCell>{booking.date}</TableCell>
+                <TableCell>{`${booking.customers[0]?.name} ${booking.customers[0]?.surname}`}</TableCell>
                 <TableCell className='text-right'>
                   <Button variant='ghost' size='sm' asChild>
                     <a href={booking.pdfUrl ?? ''} download>
