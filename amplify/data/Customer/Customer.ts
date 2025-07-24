@@ -4,6 +4,7 @@ export const Customer = a
     name: a.string(),
     surname: a.string(),
     dni: a.string(),
+    signature: a.string(),
     bookingId: a.id(),
     booking: a.belongsTo('Booking', 'bookingId'),
   })

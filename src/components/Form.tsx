@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-
 import {
   CalendarIcon,
   ChevronDown,
@@ -53,6 +52,15 @@ export default function Form() {
     Array<Schema['Customer']['createType']>
   >([{ name: '', surname: '', dni: '' }]);
   const [currentCustomer, setCurrentCustomer] = useState(0);
+
+  useEffect(() => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+      signatureRef.current.fromDataURL(
+        customers[currentCustomer].signature || ''
+      );
+    }
+  }, [currentCustomer, signatureRef]);
 
   const handleClear = () => {
     signatureRef.current?.clear();
@@ -275,6 +283,12 @@ export default function Form() {
                   ref={signatureRef}
                   canvasProps={{
                     className: 'w-full h-40 bg-background',
+                  }}
+                  onEnd={() => {
+                    updateCustomer(
+                      'signature',
+                      signatureRef.current?.toDataURL() || ''
+                    );
                   }}
                 />
               </div>
